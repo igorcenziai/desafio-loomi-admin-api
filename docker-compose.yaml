@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  migrate:
+    build:
+      context: .
+    env_file:
+      - .env
+    command: python manage.py migrate
+    volumes:
+      - .:/app
+    restart: "no"
+    networks:
+      - suvinil_network
+
+  app:
+    build:
+      context: .
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - static_volume:/app/static
+      - media_volume:/app/media
+    restart: unless-stopped
+    networks:
+      - suvinil_network
+
+volumes:
+  static_volume:
+  media_volume:
+
+networks:
+  suvinil_network:
+    name: suvinil_network
+    driver: bridge
+    external: true

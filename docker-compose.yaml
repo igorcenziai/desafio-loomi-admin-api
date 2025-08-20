@@ -13,7 +13,7 @@ services:
     networks:
       - suvinil_network
 
-  app:
+  backend:
     build:
       context: .
     ports:
